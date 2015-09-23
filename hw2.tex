@@ -1,0 +1,127 @@
+\documentclass[11pt]{scrartcl}
+\usepackage{dominatrix}
+
+\usepackage{solarized-light}
+\lstset{
+language=R
+}
+
+\title{Assignment 2}
+\subject{Statistical Finance (STAT W4290)}
+\author{Linan Qiu\\\texttt{lq2137}}
+\begin{document}
+\maketitle
+
+\section*{Problem 1}
+
+\subsection*{(a)}
+
+Let weight of A be $w_A$. Then, $2.3w_A + 4.5(1-w_A) = 3$. Solving, $w = 0.6818182$ and $w_B = 1 - w_A = 0.3181818$
+
+\subsection*{(b)}
+
+\[\sigma_R^2 = w_A^2 \sigma_A^2 + (1-w_A)^2\sigma_B^2 + 2w_A(1-w_A)\rho \sigma_A \sigma_B\]
+
+Substituting in values, and solving for $w_A$, we get $w_A = 0.3066032$ or $w_A=4.2329467$. Assuming short selling is allowed, then $w_A + w_B = 1$, then,
+
+\begin{itemize}
+\item $w_A = 0.3066032$, $w_B = 0.6933968$. $\mu_R = 3.825473$.
+\item $w_A = 4.2329467$, $w_B = -3.2329467$. $\mu_R = -4.812483$.
+\end{itemize}
+
+Portfolio with $w_A = 0.3066032$ has a larger expected return.
+
+\section*{Problem 2}
+
+If $\mu_f = 1.5$, then, let $P$ be risky portfolio, $R$ be overall capital
+
+\[\mu_R = \mu_f + w(\mu_P - \mu_f)\]
+
+and
+
+\[\sigma_R = w\sigma_P\]
+
+For $\sigma_R = 5$, $w = \frac{5}{7}$. 
+
+Then, $w_C = 0.65 * \frac{5}{7}$ and $w_D = 0.35 * \frac{5}{7}$.
+
+\section*{Problem 3}
+
+\[w_A = \frac{75 * 300}{75*300 + 115 * 100} = 0.661765\]
+
+\[w_B = \frac{115*100}{75*300+115*100} = 0.338235\]
+
+\section*{Problem 4}
+
+\subsection*{(a)}
+
+\[\sigma_R^2 = w_A^2 \sigma_A^2 + (1-w_A)^2\sigma_B^2 + 2w_A(1-w_A)\rho\sigma_A\sigma_B\]
+
+Minimizing this entire thing w.r.t $w_A$, we have
+
+\begin{align*}
+2w_A\sigma_A^2 - 2(1-w_A)\sigma_B^2 + 2(1-w_A)\rho\sigma_A\sigma_B - 2w_A\rho\sigma_A\sigma_B &= 0 \\
+w_A &= 0.826087
+\end{align*}
+
+$\alpha = 0.826087$ and $(1-\alpha) = 0.173913$
+
+\begin{lstlisting}
+> f = function(x) {2*x*0.15^2 - (2*(1-x)*0.3^2) + 2*(1-x)*0.1*0.15*0.3 - 2*x*0.1*0.15*0.3}
+> uniroot(f, c(-2, 2))
+$root
+[1] 0.826087
+
+$f.root
+[1] -2.341877e-17
+
+$iter
+[1] 2
+
+$init.it
+[1] NA
+
+$estim.prec
+[1] 6.103516e-05
+\end{lstlisting}
+
+\subsection*{(b)}
+
+\[\sigma_R^2 = w_A^2 \sigma_A^2 + (1-w_A)^2\sigma_B^2 + 2w_A(1-w_A)\rho\sigma_A\sigma_B = 0.01936957\]
+
+\[\sigma_R = 0.1391746\]
+
+\begin{lstlisting}
+> a^2 * 0.15^2 + (1-a)^2 * 0.3^2 + 2 * a * (1-a) * 0.1 * 0.15 * 0.3
+[1] 0.01936957
+> sqrt(a^2 * 0.15^2 + (1-a)^2 * 0.3^2 + 2 * a * (1-a) * 0.1 * 0.15 * 0.3)
+[1] 0.1391746
+\end{lstlisting}
+
+\subsection*{(c)}
+
+\[\mu_R = \alpha \mu_A + (1-\alpha)\mu_B = 0.113913\]
+
+\section*{Problem 5}
+
+\subsection*{(a)}
+
+$\mu_f = 0.03$ and $\mu_m = 0.14$. $\sigma_m = 0.12$. 
+
+According to CAPM,
+
+\[\mu_R = \mu_f + w(\mu_m - \mu_f)\]
+
+For expected return $\mu_R = 0.11$, $w = \frac{0.11-0.03}{0.14-0.03} = 0.7272727$
+
+Efficient way is to use $0.7272727$ market portfolio and the rest risk free assets.
+
+\subsection*{(b)}
+
+\[\sigma_R = w \sigma_m = 0.08727273\]
+
+\section*{Problem 6}
+
+\textbf{False}. CAPM only rewards investors for a particular kind of risk (or volatility): non-diversifiable ($\beta$) risk, and not idiosyncratic, diversifiable risk. Investors will not be rewarded for diversifiable risk since that can be removed via diversification of the portfolio, hence no excess return can be earned over that type of volatility.
+
+\end{document}

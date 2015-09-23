@@ -1,0 +1,209 @@
+\documentclass[11pt]{scrartcl}
+\usepackage{dominatrix}
+
+\usepackage{solarized-light}
+\lstset{
+language=R
+}
+
+\title{Assignment 1}
+\subject{Statistical Finance (STAT W4290)}
+\author{Linan Qiu\\\texttt{lq2137}}
+\begin{document}
+\maketitle
+
+\section*{Question 1}
+\subsection*{(a)}
+
+Let investment amount at $t$ be $P_t$. Set $P_0 = 1000$.
+
+Given that $\log{(1+R_{0,1})} \sim N(0.001, 0.015^2)$,
+
+\begin{align*}
+P(P_1 < 990) &= P\left(\frac{P_1}{P_0} < \frac{990}{P_0}\right) \\
+&= P\left( 1 + R_{0,1} < \frac{990}{1000} \right) \\
+&= P\left( \log{(1 + R_{0,1})} < \log{\frac{990}{1000}}\right) \\
+&= 0.2306557
+\end{align*}
+
+\begin{lstlisting}
+> pnorm(log(990/1000), mean=0.001, sd=0.015)
+[1] 0.2306557
+\end{lstlisting}
+
+\subsection*{(b)}
+\begin{align*}
+P(P_5 < 990) &= P\left(\frac{P_5}{P_0} < \frac{990}{1000} \right) \\
+&= P\left(1 + R_{0,5} < \frac{990}{1000} \right) \\
+&= P\left((1 + R_{0,1})(1 + R_{1,2})(1+R_{2,3})(1+R_{3,4})(1+R_{4,5}) < \frac{990}{1000} \right) \\
+&= P\left(\log{\left((1 + R_{0,1})(1 + R_{1,2})(1+R_{2,3})(1+R_{3,4})(1+R_{4,5})\right)} < \log{\frac{990}{1000}} \right) \\
+&= P\left(\log{(1+R_{0,1})} ... + \log{(1+R_{4,5})} < \log{\frac{990}{1000}} \right)
+\end{align*}
+
+Now, given that daily log returns are independent,
+
+\[\log{(1+R_{0,1})} ... + \log{(1+R_{4,5})} \sim N(0.005, 5 * 0.015^2)\]
+
+Then,
+
+\[P\left(\log{(1+R_{0,1})} ... + \log{(1+R_{4,5})} < \log{\frac{990}{1000}} \right) = 0.3268189\]
+
+\begin{lstlisting}
+> pnorm(log(990/1000), mean=0.005, sd=sqrt(5) * 0.015)
+[1] 0.3268189
+\end{lstlisting}
+
+\section*{Question 4}
+\subsection*{(a)}
+\begin{align*}
+R_2 &= \frac{P_2 + D_2}{P_1} - 1 \\
+&= \frac{54 + 0.2}{52} - 1 \\
+&= 0.04230769
+\end{align*}
+
+\subsection*{(b)}
+\begin{align*}
+R_4(3) &= \frac{P_4 + D_4}{P_3} * \frac{P_3 + D_3}{P_2} * \frac{P_2 + D_2}{P_1} - 1 \\
+&= \frac{59 + 0.25}{53} * \frac{53 + 0.2}{54} * \frac{54 + 0.2}{52} - 1
+&= 0.1479588
+\end{align*}
+
+\subsection*{(c)}
+\begin{align*}
+r_3 &= \log{1+R_3} \\
+&= \log{\frac{P_3 + D_3}{P_2}} \\
+&= \log{\frac{53 + 0.2}{54}} \\
+&= -0.01492565
+\end{align*}
+
+Trivial \texttt{R} code omitted.
+
+\section*{Question 6}
+\subsection*{(a)}
+
+\begin{align*}
+X_k &= X_0 \exp{(r_1 + ... + r_k)} \\
+\log {X_k} - \log{X_0} &= r_1 + ... + r_k
+\end{align*}
+
+Then,
+
+\[\log{X_k} - \log{X_0} \sim N(k\mu, k\sigma^2)\]
+
+\begin{align*}
+P(X_2 > 1.3X_0) &= P\left(\frac{X_2}{X_0} > 1.3 \right) \\
+&= P\left( \log{X_2} - \log{X_0} > \log{1.3}\right)
+\end{align*}
+
+Given that $\log{X_2} - \log{X_0} \sim N(2\mu, 2\sigma^2)$
+
+\[P\left( \log{X_2} - \log{X_0} > \log{1.3}\right) = 1 - P\left( \log{X_2} - \log{X_0} < \log{1.3}\right)\]
+
+\subsection*{(b)}
+Recall that suppose $X$ is a random variable with PDF $f_X(x)$ and $Y = g(X)$ for $g$ is a strictly increasing function. Since $g$ is strictly increasing, it has an inverse, which we denote by $h$. Then $Y$ is also a random variable and its CDF is:
+
+\[F_Y(y) = P(Y \leq y) = P(g(X) \leq y) = P(X \leq h(y) = F_X (h(y))\]
+
+Differentiating, we find the PDF of Y
+
+\[f_Y(y) = f_X(h(y)) h'(y)\]
+
+In this case, $r \sim N(\mu, \sigma^2)$
+
+\[f_R(r) = \frac{1}{\sqrt{2\pi}\sigma}\exp{\left(-\frac{(r-\mu)^2}{2\sigma^2}\right)}\]
+
+Since $Y = X_1 = X_0 \exp{R} = g(R)$,
+
+\[h(Y) = R = \log{\frac{X_1}{X_0}} = \log{X_1} - \log{X_0}\]
+
+\[h'(Y) = \frac{\delta R}{\delta X_1} = \frac{1}{X_1}\]
+
+Then,
+
+\[f_Y(y) = f_{X_1}(x) = \frac{1}{x}\frac{1}{\sqrt{2\pi}\sigma} \exp{\left(- \frac{(\log{x} - \log{X_0} - \mu)^2}{2\sigma^2}\right)}\]
+
+\subsection*{(c)}
+\[X_k = X_0 \exp{r_1 + ... + r_k} = X_0\exp{R}\]
+
+Then, $R \sim N(k\mu, k\sigma^2)$
+
+Then,
+
+\[f_{X_k}(x) = \frac{1}{x}\frac{1}{\sqrt{2\pi k}\sigma} \exp{\left(- \frac{(\log{x} - \log{X_0} - k\mu)^2}{2k\sigma^2}\right)}\]
+
+Thus transformation from $R$ to $X_k$ is monotonic. Then, we find the 0.9 quantile of $R ~ \sim N(k\mu, k\sigma^2)$. Denote this value with $r_{0.9}$. Then, the 0.9 quantile of $X_k$ is simply $X_0 \exp{r_{0.9}}$
+
+\subsection*{(d)}
+
+\[X_k^2 = X_0^2 \exp{\left(2 (r_1 + ... + r_k) \right)} = X_0^2 \prod_{i=1}^k \exp{(2r_i)} \]
+
+Then, the expectation $E(X_k^2)$ can be found by (since each $r_i$ is iid)
+
+\begin{align*}
+E(X_k^2) &= X_0^2 \int_{-\infty}^\infty \left( \prod_{i=1}^k \exp{(2r_i)} p(r_i) dr_i \right) \\
+&= X_0^2 \left( \int_{-\infty}^{\infty} \exp{(2r)} \frac{1}{\sqrt{2\pi}\sigma} \exp{-\frac{(r-\mu)^2}{2\sigma^2}} dr \right)^k \\
+&= X_0^2 \left( \int_{-\infty}^{\infty} \frac{1}{\sqrt{2\pi}\sigma} \exp{\left(2r-\frac{(r-\mu)^2}{2\sigma^2}\right)} dr \right)^k \\
+&= X_0^2 \left( \int_{-\infty}^{\infty} \frac{1}{\sqrt{2\pi}\sigma} \exp{\left(\left(2 + \frac{2\mu}{2\sigma^2}\right)r - \frac{r^2}{2\sigma^2} - \frac{\mu^2}{2\sigma^2}\right)} dr \right)^k \\
+&= X_0^2 \left(\frac{1}{\sqrt{2\pi}\sigma} \exp{\left(-\frac{\mu^2}{2\sigma^2}\right)} \int_{-\infty}^{\infty} \exp{\left(\left(2 + \frac{2\mu}{2\sigma^2}\right)r - \frac{r^2}{2\sigma^2}\right)} dr \right)^k
+\end{align*}
+
+Working on the inner exponent,
+
+\begin{align*}
+\left(2 + \frac{2\mu}{2\sigma^2}\right)r - \frac{r^2}{2\sigma^2} &= -\frac{1}{2\sigma^2} \left(r^2 - 2\sigma^2 \left(2 + \frac{\mu}{\sigma^2}\right)r \right) \\
+&= -\frac{1}{2\sigma^2} \left( r^2 - 2 (2\sigma^2 + \mu) r\right) \\
+&= -\frac{1}{2\sigma^2} \left( r^2 - 2 (2\sigma^2+\mu)r + (2\sigma^2+\mu)^2 - (2\sigma^2 + \mu)^2\right) \\
+&= -\frac{1}{2\sigma^2} \left(\left(r - (2\sigma^2 + \mu)\right)^2 - (2\sigma^2 + \mu)^2\right)
+\end{align*}
+
+Continuing where we left off earlier,
+\begin{align*}
+E(X_k^2) &= X_0^2 \left(\frac{1}{\sqrt{2\pi}\sigma} \exp{\left(-\frac{\mu^2}{2\sigma^2}\right)} \int_{-\infty}^{\infty} \exp{\left(\left(2 + \frac{2\mu}{2\sigma^2}\right)r - \frac{r^2}{2\sigma^2}\right)} dr \right)^k \\
+&= X_0^2 \left(\frac{1}{\sqrt{2\pi}\sigma} \exp{\left(-\frac{\mu^2}{2\sigma^2}\right)} \exp{\frac{(2\sigma^2 + \mu)^2}{2\sigma^2}} \int_{-\infty}^{\infty} \exp{\left( -\frac{1}{2\sigma^2} (r - (2\sigma^2 + \mu))^2 \right)} dr \right)^k \\
+&= X_0^2 \left(\frac{1}{\sqrt{2\pi}\sigma} \exp{\frac{(4\sigma^4 + 4\sigma^2\mu)^2}{2\sigma^2}} \int_{-\infty}^{\infty} \exp{\left( -\frac{1}{2\sigma^2}r^2 \right)} dr \right)^k
+\end{align*}
+
+Recall that
+
+\[\int_{-\infty}^\infty \exp{(-ax^2)} = \sqrt{\frac{\pi}{a}}\]
+
+Then,
+
+\begin{align*}
+E(X_k^2) &= X_0^2 \left(\frac{1}{\sqrt{2\pi}\sigma} \sqrt{2\pi} \sigma \exp{(2\mu + 2\sigma^2)}\right)^k \\
+&= X_0^2 \exp{(2k\mu + 2k\sigma^2)}
+\end{align*}
+
+\subsection*{(e)}
+
+\[Var(X_k) = E(X_k^2) - E(X_k)^2\]
+
+(I'm running late for the assignment and had no time to typeset this). Using basically the same stuff as (d) except replace $X_k^2$ with $X_k$
+
+\[E(X_k) = X_0 \exp{\left( \frac{k\sigma^2}{2} + k\mu\right)}\]
+
+Then,
+
+\begin{align*}
+Var(X_k) &= X_0^2 \exp{(2k\mu + 2k\sigma^2)} - X_0^2 \exp{\left( \frac{2k\sigma^2}{2} + 2k\mu\right)}\\
+&= X_0^2 \left( \exp{(2k\mu + 2k\sigma^2)} - \exp{\left( \frac{2k\sigma^2}{2} + 2k\mu\right)}\right)
+\end{align*}
+
+\section*{Question 7}
+
+Given that $\log{(1+R_t)} \sim N(0.0002, 0.03^2)$, $\log{(1+R_{0,20})} \sim N(20 * 0.0002, 20 * 0.03^2)$
+
+\begin{align*}
+P(P_{20} > 100) &= P\left(\frac{P_{20}}{P_0} > \frac{100}{P_0} \right) \\
+&= P \left( 1 + R_{0,20} > \frac{100}{97} \right) \\
+&= P\left( \log{(1+R_1)} + \log{(1+R_2)} + ... + \log{(1+R_{20})} > \log{\frac{100}{97}} \right) \\
+&= 1 - P\left( \log{(1+R_1)} + \log{(1+R_2)} + ... + \log{(1+R_{20})} < \log{\frac{100}{97}} \right) \\
+&= 0.4218295
+\end{align*}
+
+\begin{lstlisting}
+> 1 - pnorm(log(100/97), mean=20*0.0002, sd=sqrt(20) * 0.03)
+[1] 0.4218295
+\end{lstlisting}
+
+\end{document}
