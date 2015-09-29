@@ -1,0 +1,207 @@
+\documentclass[11pt]{scrartcl}
+\usepackage{dominatrix}
+
+\usepackage{solarized-light}
+\lstset{
+language=R
+}
+
+\title{Assignment 3}
+\subject{Statistical Finance (STAT W4290)}
+\author{Linan Qiu\\\texttt{lq2137}}
+\begin{document}
+\maketitle
+
+\section*{Ruppert 2}
+
+\subsection*{(a)}
+
+According to CAPM,
+
+\[r = r_f + \alpha(r_m - r_f)\]
+
+If $r_f = 0.03$ and $r_m = 0.14$, for $r$ to be $0.11$, then $\alpha = \frac{8}{11}$. The efficient way to invest is then $\frac{8}{11}$ market portfolio and the rest in risk free assets.
+
+\subsection*{(b)}
+
+Since standard deviation of risk free asset is 0, the standard deviation of the portfolio is $\alpha \sigma_m = \frac{8}{11}0.12 = 0.08727273$
+
+\section*{Ruppert 6}
+
+\subsection*{(a)}
+
+\[\beta = \frac{\sigma_{A,m}}{\sigma^2_m} = \frac{0.0165}{0.11^2} = 1.363636\]
+
+\subsection*{(b)}
+
+\[E(r) = r_f + \beta(r_m - r_f) = 0.04 + 1.363636(0.12-0.04) = 0.1490909\]
+
+\subsection*{(c)}
+
+Proportion of risk due to market risk is $\frac{\sigma_{A,m}}{\sigma_A^2} = \frac{165}{220} = 0.75$
+
+\section*{Ruppert 8}
+
+\subsection*{(a)}
+
+\[E(r_m) = w_C * r_C + w_D * r_D =  0.6*0.04 + 0.4 * 0.06 =0.048\]
+
+\subsection*{(b)}
+
+\[\sigma_{m}^2 = w^2_C\sigma_C + w^2_D\sigma_D + 2w_C w_D \sigma_C \sigma_D \rho_{CD}\]
+
+Then, $\sigma_m = 0.1144727$
+
+\subsection*{(c)}
+
+\[\sigma = \alpha\sigma_m\]
+
+$\alpha = \frac{\sigma}{\sigma_m} = \frac{0.03}{0.1144727} = 0.2620712$. 
+
+Then $1-0.2620712 = 0.7379288$ of equity should be in risk free assets.
+
+\subsection*{(d)}
+
+\[r = r_f + \alpha(r_m - r_f)\]
+
+For $r=0.07$,
+
+\[\alpha = \frac{r-r_f}{r_m - r_f} = \frac{0.07-0.012}{0.048-0.012} = 1.611111\]
+
+This means that $1.611111$ of the equity should be in the risky portfolio, and $-0.611111$ should be in risk free. In the risky portfolio, the proportion of C and D stays the same. Hence, overall:
+
+\begin{itemize}
+\item $0.9666666$ in C
+\item $0.6444444$ in D
+\item $-0.611111$ in risk free assets (short position)
+\end{itemize}
+
+\section*{Ruppert 10}
+
+\subsection*{(a)}
+
+\[r = r_f + \alpha(r_m - r_f)\]
+
+For $r = 0.11$,
+
+\[\alpha = \frac{r-r_f}{r_m - r_f} = \frac{0.11 - 0.07}{0.14-0.07} = 0.5714286\]
+
+$0.5714286$ in risky assets, $1-0.5714286 = 0.4285714$ in risk free assets.
+
+\subsection*{(b)}
+
+\[\sigma = \alpha\sigma_m = 0.5714286 * 0.12 = 0.06857143\]
+
+\section*{Additional Problem A1}
+
+\subsection*{(a)}
+
+The general equation for CML is
+
+\[\mu = \mu_f + \frac{\mu_m - \mu_f}{\sigma_m}\sigma\]
+
+The slope is then $\frac{\mu_m - \mu_f}{\sigma_m} = \frac{0.23-0.07}{0.32} = 0.5$
+
+\subsection*{(b)}
+
+\subsubsection*{(i)}
+
+If $\mu=0.39$, and $0.39 = 0.07 + 0.5\sigma$, then $\sigma = 0.64$
+
+\subsubsection*{(ii)}
+
+Honestly I'll use it to pay my tuition. But answering the question, let $\alpha$ be the proportion invested in market portfolio. $\alpha = \frac{\sigma}{\sigma_m} = \frac{0.64}{0.32} = 2$. Then, weight of risk free assets is $-1$. Short \$1000 risk free, long \$2000 risky portfolio.
+
+\subsection*{(c)}
+
+In this case, $\alpha = 0.7$. Given that
+
+\[\mu = \mu_f + \alpha(\mu_m - \mu_f) = 0.182\]
+
+You should expect to have $1000 * (1+0.182) = \$1182$
+
+\section*{Additional Problem A2}
+
+\subsection*{(a)}
+
+\[w_A = \frac{100*1.5}{100*1.5+150*2} = \frac{1}{3}\]
+
+\[w_B = 1 - \frac{1}{3} = \frac{2}{3}\]
+
+\[r_m = \frac{1}{3}0.15 + \frac{2}{3}0.12 = 0.13\]
+
+\subsection*{(b)}
+
+\[\sigma_m^2 = w_A^2 0.15^2 + (1-w_A)^2 0.09^2 + 2w_A(1-w_A)*0.15*0.09*\frac{1}{3} = 0.0081 \]
+
+Then, $\sigma_m = 0.09$.
+
+\subsection*{(c)}
+
+\begin{align*}
+\beta_A &= \frac{\sigma_{A,m}}{\sigma_m^2} \\
+&= \frac{\frac{1}{3}\sigma_A^2 + \frac{2}{3}\sigma_{A,B}}{\sigma_m^2} \\
+&= \frac{\frac{1}{3}\sigma_A^2 + \frac{2}{3}\sigma_A\sigma_B\rho_{AB}}{\sigma_m^2} \\
+&= 1.296296
+\end{align*}
+
+\subsection*{(d)}
+
+\[r_A = r_f + \beta_A (r_m - r_f)\]
+
+It's late and I can't do math anymore, so...
+
+\begin{lstlisting}
+> f = function(x) {x + 1.296296*(0.13-x) - 0.15}
+> uniroot(f, c(-1000, 1000))
+$root
+[1] 0.06249993
+
+$f.root
+[1] -2.939315e-14
+
+$iter
+[1] 2
+
+$init.it
+[1] NA
+
+$estim.prec
+[1] 6.103516e-05
+\end{lstlisting}
+
+\[r_f = 0.06249993\]
+
+\hrulefill
+
+I initially thought we had to calculate the tangency portfolio on our own. If this is the case, please use this answer instead:
+
+To calculate the tangency portfolio, let $w_A$ and $w_B$ be weights of A and B in the tangency portfolio. $w_B = 1-w_A$.
+
+\[r_m = w_A 0.15 + (1-w_A) 0.12\]
+
+and
+
+\[\sigma_m^2 = w_A^2 0.15^2 + (1-w_A)^2 0.09^2 + 2w_A(1-w_A)*0.15*0.09*\frac{1}{3}\]
+
+$w_A$ of the tangency portfolio is the one that minimizes $\sigma_m^2$.
+
+\begin{lstlisting}
+> sigmam2 = function(w) {w^2 * 0.15^2 + (1-w)^2 * 0.09^2 + 2*w*(1-w)*0.15*0.09/3}
+> optimize(sigmam2, interval=c(-100,100), maximum=FALSE)
+$minimum
+[1] 0.1666667
+
+$objective
+[1] 0.0075
+\end{lstlisting}
+
+$w_A = 0.1666667$ with an accompanying $\sigma_m^2 = 0.0075$
+\[r_m = w_A 0.15 + (1-w_A)0.12 = 0.125\]
+
+As calculated earlier, $\sigma_m^2 = 0.0075$. Hence, 
+
+\[\sigma_m = \sqrt{ w_A^2 0.15^2 + (1-w_A)^2 0.09^2 + 2w_A(1-w_A)*0.15*0.09*\frac{1}{3}} = 0.08660254\]
+
+
+\end{document}
