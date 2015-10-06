@@ -1,0 +1,283 @@
+\documentclass[11pt]{scrartcl}
+\usepackage{dominatrix}
+
+\newcommand{\PAR}{\ensuremath{\mathrm{PAR}}}
+
+\usepackage{solarized-light}
+\lstset{
+language=R
+}
+
+\title{Assignment 4}
+\subject{Statistical Finance (STAT W4290)}
+\author{Linan Qiu\\\texttt{lq2137}}
+\begin{document}
+\maketitle
+
+\section*{Rupert Problem 3}
+
+\[1200 = \frac{40}{r}\left(1 - \frac{1}{(1+r)^{30}} \right) + \frac{1000}{(1+r)^{30}}\]
+
+Solving for $r$, we get $r=0.03241618$
+
+\begin{lstlisting}
+> zero = function(r) {(40/r)*(1-1/(1+r)^60) + 1000/(1+r)^60 - 1200}
+> uniroot(zero, c(0.03, 0.04), maxiter=100)
+$root
+[1] 0.03241618
+
+$f.root
+[1] -0.5497406
+
+$iter
+[1] 3
+
+$init.it
+[1] NA
+
+$estim.prec
+[1] 6.103516e-05
+\end{lstlisting}
+
+\section*{Rupert Problem 4}
+
+\[9800 = \frac{280}{\frac{r}{2}} \left(1-\frac{1}{\left(1+\frac{r}{2}\right)^{8*2}}\right) + \frac{10000}{\left(1+\frac{r}{2}\right)^{8*2}}\]
+
+Solving for $r$, we get
+
+\begin{lstlisting}
+> zero = function(r) {(280/(r/2)) * (1-1/(1+(r/2))^(8*2)) + 10000/(1+(r/2))^(8*2) - 9800}
+> uniroot(zero, c(0.05, 0.06), maxiter=100)
+$root
+[1] 0.05920323
+
+$f.root
+[1] -1.794659
+
+$iter
+[1] 2
+
+$init.it
+[1] NA
+
+$estim.prec
+[1] 6.103516e-05
+\end{lstlisting}
+
+\section*{Rupert Exercise 1}
+
+\[y(t) = \frac{1}{t} \int_0^t r(s) \: ds\]
+
+\subsection*{(a)}
+
+Setting $t=20$,
+
+\begin{align*}
+y(20) &= \frac{1}{20} \int_0^t 0.028 + 0.00042s \: ds \\
+&=\frac{1}{20}(0.028*20 + 0.00021*(20^2)) \\
+&=0.0322
+\end{align*}
+
+\subsection*{(b)}
+
+\[y(15) = 0.03115\]
+
+\begin{lstlisting}
+> r = function(t) {0.028 + 0.00042*t}
+> y = integrate(r, 0, 15)$value / 15
+> y
+[1] 0.03115
+\end{lstlisting}
+
+Then the price of the bond is 
+
+\[P = \frac{1000}{(1+0.03115)^{15}} = 631.2077\]
+
+\section*{Rupert Exercise 3}
+
+\[y(t) = \frac{1}{t} \int_0^t r(s) \: ds\]
+
+\subsection*{(a)}
+
+Setting $t=5$, $y(5) = 0.03616667$
+
+\begin{lstlisting}
+> r = function(t){0.032+0.001*t+0.0002*t^2}
+> y = integrate(r, 0, 5)$value / 5
+> y
+[1] 0.03616667
+\end{lstlisting}
+
+\subsection*{(b)}
+
+Assume bond has par \$100, then
+
+\[P = \frac{100}{(1+0.03616667)^5} = 83.72438\]
+
+\section*{Ruppert Exercise 5}
+
+Now the sum of a geometric series $C + Cm + Cm^2 + ... = \frac{C}{1-m}$. If $m = \frac{1}{1-r}$, then $C + Cm + Cm^2 + ... = \frac{C(1+r)}{r}$. If the cash flow $C$ begins a year later, we discount the entire amount by $(1+r)$ thereby making the present value of the sum $\frac{C}{r}$.
+
+Then,
+
+\begin{align*}
+&\sum_{t=1}^{2T} \frac{C}{(1+r)^t} + \frac{\PAR}{(1+r)^{2T}} \\
+&=\sum_{t=1}^\infty \frac{C}{(1+r)^t} - \sum_{t=2T+1}^\infty \frac{C}{(1+r)^t} + \frac{\PAR}{(1+r)^{2T}} \\
+&= \frac{C}{r} - \frac{C}{r(1+r)^{2T}} + \frac{\PAR}{(1+r)^{2T}} \\
+&= \frac{C}{r} + \left(\PAR - \frac{C}{r}\right)(1+r)^{-2T}
+\end{align*}
+
+\section*{Ruppert Exercise 7}
+
+\subsection*{(a)}
+
+Given that
+
+\begin{align*}
+818 &= \frac{1000}{\exp{5r}} \\
+r &= \frac{\log{\frac{1000}{818}}}{5}
+&= 0.04017859
+\end{align*}
+
+This means that $r = 0.04017859$
+
+\subsection*{(b)}
+
+\[P = \frac{1000}{\exp{4*0.042}} = 845.3538\]
+
+\subsection*{(c)}
+
+\[R_2 = \frac{P_2}{P_1} - 1 = \frac{845.3538}{818} - 1 = 0.03343985\]
+
+\section*{Ruppert Exercise 8}
+
+\subsection*{(a)}
+
+\[P = \frac{22}{\frac{0.04}{2}}\left(1-\frac{1}{1.02^{20}}\right) + \frac{1000}{1.02^{20}} = 1032.703\]
+
+\subsection*{(b)}
+
+Coupon rate is $\frac{22}{1000} = 0.022$. Coupon rate is higher than yield rate of $0.02$, hence selling above par.
+
+\section*{Ruppert Exercise 9}
+
+\subsection*{(a)}
+
+\[1050 = \frac{24}{\frac{r}{2}}\left(1-\frac{1}{\left(1+\frac{r}{2}\right)^{14}}\right) + \frac{1000}{\left(1+\frac{r}{2}\right)^{14}}\]
+
+Solving for $r$, we get $r=0.03975274$
+
+\begin{lstlisting}
+> zero = function(r) {(24/(r/2))*(1-1/(1+r/2)^14) + 1000/(1+r/2)^14 - 1050}
+> uniroot(zero, c(0.001, 1))
+$root
+[1] 0.03975274
+
+$f.root
+[1] -0.03484846
+
+$iter
+[1] 5
+
+$init.it
+[1] NA
+
+$estim.prec
+[1] 6.103516e-05
+\end{lstlisting}
+
+\subsection*{(b)}
+
+Current price is \$1050. Coupon payment is \$24. Current yield is $2*\frac{24}{1050} = 0.04571429$
+
+\subsection*{(c)}
+
+Yield to maturity is less than current yield. This is because the bond is selling at above par (price $>$ face value), hence the eventual face value principal payment would be discounted at a level steeper than the current yield, thereby resulting in a lower yield to maturity.
+
+\section*{Ruppert Exercise 14}
+
+\subsection*{(a)}
+
+\[Y_T = 0.04 + 0.001T\]
+
+Then,
+
+\[P = \frac{1000}{(1+Y_T(10))^{10}} = 613.9133\]
+
+\subsection*{(b)}
+
+\[P = \frac{1000}{(1+Y_T(9))^9} = 639.1099\]
+
+Then, return $R_2$ is
+
+\[R_2 = \frac{P_2}{P_1} - 1 = \frac{639.1099}{613.9133} - 1 = 0.0410426\]
+
+\section*{Ruppert Exercise 16}
+
+\subsection*{(a)}
+
+To find the 5 year yield to maturity,
+
+\[y(t) = \int_0^t r(s) \: ds = \int_0^t 0.03 + 0.001s + 0.0002s^2 \: ds\]
+
+Then, $y(5) = 0.03416667$
+
+\begin{lstlisting}
+> r = function(s) {0.03 + 0.001*s + 0.0002*s^2}
+> integrate(r, 0, 5)$value/5
+[1] 0.03416667
+\end{lstlisting}
+
+\subsection*{(b)}
+
+Assume face value of \$100,
+
+\[P = \frac{100}{(1+0.03416667)^5} = 84.53709\]
+
+\section*{Ruppert Exercise 20}
+
+\subsection*{(a)}
+
+To find the 4 year yield to maturity,
+
+\[y(t) = \int_0^t r(s) \: ds = \int_0^t 0.022 + 0.005s - 0.004s^2 + 0.0003s^3 \: ds\]
+
+Then,
+
+\[P = \sum_{t=1}^8 \frac{21}{\left(1+y\left(\frac{t}{2}\right)\right)^t} + \frac{1000}{\left(1+y\left(\frac{8}{2}\right)\right)^8}\]
+
+\begin{lstlisting}
+> r = function(s) {0.022 + 0.005*s - 0.004*s^2 + 0.0003*s^3}
+> y = function(t) {integrate(r, 0, t)$value/t}
+> yields = sapply(n/2, y)
+> yields
+[1] 0.02292604 0.02324167 0.02300312 0.02226667 0.02108854 0.01952500 0.01763229 0.01546667
+> pv_coupon = mapply(function(x, yield) {21/(1+yield)^x}, n, yields, SIMPLIFY=TRUE)
+> pv_coupon
+[1] 20.52934 20.05686 19.61500 19.22926 18.91918 18.69959 18.58160 18.57351
+> pv_face = 1000/(1+y(4))^8
+> sum(pv_coupon) + pv_face
+[1] 1038.657
+\end{lstlisting}
+
+The price of the bond is \$1038.657.
+
+\subsection*{(b)}
+
+Assume that we are asking for \textbf{Macaulay duration} (not modified duration)
+
+\[D = \frac{\sum_{t=1}^8 \left[\frac{t}{2} \left(\frac{21}{\left(1+y\left(\frac{t}{2}\right)\right)^t} \right)\right] + 4 * \frac{1000}{(1+y(4))^8}}{P}\]
+
+\begin{lstlisting}
+> coupons = sapply(n, function(x) {(x/2) * (21/(1+y(x/2))^x)})
+> coupons
+[1] 10.26467 20.05686 29.42251 38.45851 47.29795 56.09876 65.03560 74.29403
+> sum(coupons) + 4*pv_face
+[1] 3878.74
+> (sum(coupons) + 4*pv_face)/(sum(pv_coupon) + pv_face)
+[1] 3.73438
+\end{lstlisting}
+
+The duration is $3.73438$
+
+\end{document}
