@@ -1,0 +1,221 @@
+\documentclass[11pt]{scrartcl}
+\usepackage{dominatrix}
+
+\newcommand{\PAR}{\ensuremath{\mathrm{PAR}}}
+
+\usepackage{solarized-light}
+\lstset{
+language=R
+}
+
+\title{Assignment 5}
+\subject{Statistical Finance (STAT W4290)}
+\author{Linan Qiu\\\texttt{lq2137}}
+\begin{document}
+\maketitle
+
+\section{}
+
+\[S~N(0.001, 0.015)\]
+
+\begin{align*}
+P(S < 0.001 - 0.015) &= P\left(\frac{S - 0.001}{0.015} < -1\right) \\
+&= 0.1586553
+\end{align*}
+
+\section{}
+
+\subsection{}
+
+\[R~N(0.001, 0.015) = 0.015Z + 0.001\]
+
+\begin{align*}
+P(R < r) &= 0.1 \\
+P(0.015Z + 0.001 < r) &= 0.1 \\
+P(Z < \frac{r - 0.001}{0.015}) &= 0.1
+\end{align*}
+
+\begin{align*}
+VaR(0.1) &= -S * q(0.1) \\
+&= -1000000 * q(0.1) \\
+&= -1000000 * (q_{norm}(0.1) * 0.015 + 0.001) \\
+&= -1000000 * -0.01822327 \\
+&= 18223.27
+\end{align*}
+
+\subsection{}
+
+\[R~N(0.1, 0.2)\]
+
+\begin{align*}
+P(R < r) &= 0.05 \\
+P(0.2Z + 0.1 < r) &= 0.05 \\
+P(Z < \frac{r - 0.1}{0.2}) &= 0.05
+\end{align*}
+
+\begin{align*}
+VaR(0.05) &= -S * q(0.05) \\
+&= -1000 * q(0.05) \\
+&= -1000 * (q_{norm}(0.05) * 0.2 + 0.1) \\
+&= 228.9707
+\end{align*}
+
+\section{}
+
+\subsection{}
+
+\[R~t(df=2, 0.001, 0.015)\]
+
+\begin{align*}
+P(R < r) &= 0.1 \\
+P(0.015T + 0.001 < r) &= 0.1 \\
+P(T < \frac{r-0.001}{0.015}) &= 0.1
+\end{align*}
+
+\begin{align*}
+VaR(0.1) &= -S * q(0.1) \\
+&= -1000 * q(0.1) \\
+&= -1000 * (q_{t, df=2}(0.1) * 0.015 + 0.001) \\
+&= 27.28427
+\end{align*}
+
+\subsection{}
+
+\[R~t(df=5, 0.001, 0.015)\]
+
+\begin{align*}
+VaR(0.1) &= -S * q(0.1) \\
+&= -1000 * q(0.1) \\
+&= -1000 * (q_{t, df=5}(0.1) * 0.015 + 0.001) \\
+&= 21.13826
+\end{align*}
+
+As expected, larger df leads to slimmer tails.
+
+\section{}
+
+Compose a portfolio of stock A and B. Let the portfolio be $S$. Then $S ~ N(500*0.01 + 1000*0.005, \sigma_s) = N(10, \sigma_s)$
+
+\subsection{}
+
+Given independence, $\sigma_s = \sqrt{500^2*\sigma_A^2 + 1000^2*\sigma_B^2} = 26.92582$
+
+\begin{align*}
+VaR(0.05) &= -q(0.05) \\
+&= -(q_{norm}(0.05) * sigma_s + 10) \\
+&= 34.28904
+\end{align*}
+
+\subsection{}
+
+Given $\rho = 0.3$, $\sigma_s = \sqrt{500^2*\sigma_A^2 + 1000^2*\sigma_B^2 + 500*1000*2 * \rho * \sigma_A * \sigma_B} = 29.5804$
+
+\begin{align*}
+VaR(0.05) &= -q(0.05) \\
+&= -(q_{norm}(0.05) * sigma_s + 10) \\
+&= 38.65543
+\end{align*}
+
+\subsection{}
+
+Given $\rho = -0.3$, $\sigma_s = \sqrt{500^2*\sigma_A^2 + 1000^2*\sigma_B^2 + 500*1000*2 * \rho * \sigma_A * \sigma_B} = 23.97916$
+
+\begin{align*}
+VaR(0.05) &= -q(0.05) \\
+&= -(q_{norm}(0.05) * sigma_s + 10) \\
+&= 29.4422
+\end{align*}
+
+\section{}
+
+First, recognize that $Z$ is not a variable, but determined by the function. Since
+
+\[\int_{-\infty}^{\infty} \frac{1}{Z} \frac{|x+1|}{(x^2+1)^2} = 1\]
+
+Then
+
+\[Z = \int_{-\infty}^{\infty} \frac{|x+1|}{(x^2+1)^2} = 1.785398\]
+
+\begin{lstlisting}
+> crazy_eqn = function (x) {
++   abs(x+1)/((x^2+1)^2)
++ }
+> integrate(f=crazy_eqn, lower=-Inf,upper=+Inf)
+1.785398 with absolute error < 6e-09
+\end{lstlisting}
+
+Now because my integration-fu is too bad, let me solve for this numerically. We want $VaR(0.05) = F(0.95)$ where $F$ is the CDF ($\int f(x) \:dx$) of $L$. Hence
+
+\[F(\alpha) = \int_{-\infty}^\alpha \frac{1}{Z} \frac{|x+1|}{(x^2+1)^2}dx\]
+
+Unfortunately, \texttt{R} does not have a function for numerical computation of quantiles for arbitrary distribution functions. However, we can build one.
+
+Finding $\alpha$ above is equivalent to the following optimization problem:
+
+\[\alpha^* = \arg\min_{\alpha} (F(\alpha) - 0.05)^2\]
+
+Then all we need is an optimization routine to find $\alpha$ that minimizes the squared error $F(\alpha) - q)^2$. In \texttt{R} there exists the library \texttt{nlminb} for numerical optimization. The functions are below:
+
+\begin{lstlisting}
+CDF = function (x, dist) {
+  integrate(f = dist, lower = -Inf, upper = x)$value
+}
+objective = function (x, quantile, dist) {
+  (CDF(x, dist) - quantile)^2
+}
+find_quantile = function (dist, quantile) {
+  result = nlminb(start = 0, objective = objective, quantile = quantile, dist = dist)$par
+  return (result)
+}
+
+crazy_eqn = function (x) {
+  abs(x+1)/((x^2+1)^2)
+}
+
+z = integrate(crazy_eqn, lower=-Inf, upper=Inf)
+
+crazy_eqn_to_integrate = function(x) {
+  z$value * (abs(x+1)/((x^2+1)^2))
+}
+
+alpha = find_quantile(dist = crazy_eqn_to_integrate, quantile = 0.95)
+
+integrate(crazy_eqn_to_integrate, lower=-Inf, upper=alpha)
+\end{lstlisting}
+
+Solving for $\alpha$, we get $\alpha = 0.03161596$.
+
+I also didn't realize there was a hint for this question on Courseworks. Please make an announcement next time please? \texttt{:)} I did solve the first portion of the integration and got a really funky equation with $\arctan$, and thought I had to inverse that by hand (given the nature of this assignment).
+
+\section{}
+
+\subsection{}
+
+\begin{align*}
+P(L>VaR(\alpha)) &= P(\sigma Z + \mu > VaR(\alpha)) \\
+&= P\left(Z > \frac{VaR(\alpha) - \mu}{\sigma}\right)
+\end{align*}
+
+Then $VaR(\alpha) = -(\sigma Q(\alpha) + \mu) = \sigma Q(1-\alpha) + \mu = \sigma Q(z_\alpha) + \mu$ where $Q$ is the standard normal quantile function. Following the definition of expected shortfall,
+
+\begin{align*}
+ES(\alpha) &= -\frac{\int_{0}^\alpha VaR(x) \: dx}{\alpha} \\
+&= -\frac{\int_{0}^\alpha \sigma Q(1-x) + \mu \: dx}{\alpha} \\
+&= -\frac{\mu\alpha + \int_{0}^\alpha \sigma Q(1-x) \: dx}{\alpha} \\
+&= -\frac{\mu\alpha + \int_{1}^{1-\alpha} \sigma Q(z) \: dz}{\alpha} \\
+&= \mu + \frac{\sigma \phi(z_\alpha)}{\alpha}
+\end{align*}
+
+Sorry I didn't show the last step. I know $Q(z) = zf(z)$ where $f$ is the density function, and that that is integrable using by parts, but I don't have enough time to solve this.
+
+\subsection{}
+
+Plugging the numbers into the formula,
+
+\begin{align*}
+ES(0.05) &= S * \left(-\mu + \frac{\sigma\phi(z_\alpha)}{\alpha}\right) \\
+&= 100000 * \left(0.04 + \frac{0.18\phi(Q(0.05))}{0.95}\right) \\
+&= 33128.83
+\end{align*}
+
+\end{document}
