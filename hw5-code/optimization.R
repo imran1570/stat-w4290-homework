@@ -19,6 +19,6 @@ crazy_eqn_to_integrate = function(x) {
   z$value * (abs(x+1)/((x^2+1)^2))
 }
 
-find_quantile(dist = crazy_eqn_to_integrate, quantile = 0.95)
+alpha = find_quantile(dist = crazy_eqn_to_integrate, quantile = 0.95)
 
-integrate(crazy_eqn_to_integrate, lower=-Inf, upper=0.03161596)
+integrate(crazy_eqn_to_integrate, lower=-Inf, upper=alpha)

@@ -1,0 +1,254 @@
+\documentclass[11pt]{scrartcl}
+\usepackage{dominatrix}
+
+\newcommand{\PAR}{\ensuremath{\mathrm{PAR}}}
+\newcommand{\sign}{\ensuremath{\mathrm{sign}}}
+\newcommand{\kt}{\ensuremath{\rho_\tau}}
+\newcommand{\cov}{\ensuremath{\mathrm{cov}}}
+
+\usepackage{solarized-light}
+\lstset{
+language=R
+}
+
+\title{Assignment 6}
+\subject{Statistical Finance (STAT W4290)}
+\author{Linan Qiu\\\texttt{lq2137}}
+\begin{document}
+\maketitle
+
+\section{}
+
+An bivariate Archimedean copula with a strict generator has the form
+
+\[C(u, v) = \phi^{-1}(\phi(u) + \phi(v)) \]
+
+Now the Frank copula has the generator $\phi$ as
+
+\[\phi(u) = -\log{\frac{e^{(-\theta u)} - 1}{e^{(-\theta)} - 1}}\]
+
+Then, the inverse generator $\phi^{-1}$ is
+
+\[\phi^{-1}(y) = -\frac{1}{\theta} \log{\left[(e^{(-y)})(e^{(-\theta)} - 1) + 1\right]}\]
+
+Then, the variate Frank copula is
+
+\begin{align*}
+C(u,v) &= -\frac{1}{\theta} \log{\left[(e^{(-\phi(u) - \phi(v))})(e^{(-\theta)} - 1) + 1\right]} \\
+&= -\frac{1}{\theta} \log{\left[(e^{(\log{\frac{e^{(-\theta u)} - 1}{e^{(-\theta)} - 1}} + \log{\frac{e^{(-\theta v)} - 1}{e^{(-\theta)} - 1}})})(e^{(-\theta)} - 1) + 1\right]} \\
+&= -\frac{1}{\theta} \log{\left[(e^{(\log{\frac{(e^{(-\theta u)} - 1)(e^{(-\theta v)} - 1)}{(e^{(-\theta)} - 1)^2}} )})(e^{(-\theta)} - 1) + 1\right]} \\
+&= -\frac{1}{\theta} \log{\left[\frac{(e^{(-\theta u)} - 1)(e^{(-\theta v)} - 1)}{(e^{(-\theta)} - 1)^2}  (e^{(-\theta)} - 1) + 1\right]} \\
+&= -\frac{1}{\theta} \log{\left[\frac{(e^{(-\theta u)} - 1)(e^{(-\theta v)} - 1)}{(e^{(-\theta)} - 1)} + 1\right]}
+\end{align*}
+
+\section{}
+
+To prove that $C(u,v) \leq C^+ (u,v)$, recall that by definition of a bivariate copula, $C(u,1) = u$ and $C(1,v) = v$. The bivariate copula is also 2 increasing. Hence,
+
+\begin{align*}
+C(u, v) \leq C(u, 1) = u \\
+C(u, v) \leq C(1, v) = v \\
+\end{align*}
+
+Then, $C(u,v) \leq \min(u, v)$.
+
+Now given that copulas are 2-increasing,
+
+\[C(u_2, v_2) - C(u_1, v_2) - C(u_2, v_1) + C(u_1, v_1) \geq 0\]
+
+Set $u_1 = u$, $u_2 = 1$, $v_1 = v$, $v_2 = 1$, we get
+
+\begin{align*}
+1 - u - v + C(u,v) &\geq 0 \\
+C(u,v) &\geq u+v-1
+\end{align*}
+
+Similarly, set $u_1 = 0$, $u_2 = u$, $v_1 = 0$, $v_2 = v$, by the grounded property, we get
+
+\begin{align*}
+C(u,v) - 0 - 0 + 0 &\geq 0 \\
+C(u,v) &\geq 0
+\end{align*}
+
+Hence, $C(u,v) \geq \max(u+v-1, 0)$. Combining that with the previous result,
+
+\[C^-(u,v) \leq C(u,v) \leq C^+(u, v)\]
+
+\section{}
+
+\subsection{}
+
+Probability of both defaulting is
+
+\begin{align*}
+P(T_A \leq 1 \cap T_B \leq 1) &= C(P(T_A \leq 1), P(T_B \leq 1)) \\
+&= C(1-e^{-\lambda_A}, 1-e^{-\lambda_B}) \\
+&= e^{\left( -((-\log{u})^{\alpha} + (-\log{v})^{\alpha})^{\frac{1}{\alpha}}\right)} \\
+&= 0.00235139
+\end{align*}
+
+where $u$ and $v$ are $1- e^{-\lambda_A}$ and $1-e^{-\lambda_B}$ respectively.
+
+\begin{lstlisting}
+lambdaa = 0.01
+lambdab = 0.02
+u = 1-exp(-lambdaa)
+v = 1-exp(-lambdab)
+alpha = 2
+
+gumbel = function(u, v, alpha) {
+  return(exp(-((-log(u))^alpha + (-log(v))^alpha)^(1/alpha)))
+}
+
+gumbel(u, v, alpha)
+\end{lstlisting}
+
+\subsection{}
+
+Probability of at least 1 defaulting is
+
+\begin{align*}
+&P(T_A \leq 1) + P(T_B \leq 1) + P(T_A \leq 1 \cap T_B \leq 1) \\
+= &P(T_A \leq 1) + P(T_B \leq 1) + C(P(T_A \leq 1), P(T_B \leq 1)) \\
+= &0.0274001
+\end{align*}
+
+\begin{lstlisting}
+default_p = function(lambda, t) {
+  return(1 - exp(-lambda * t))
+}
+
+default_p(0.01, 1) + default_p(0.02, 1) - gumbel(u, v, alpha)
+\end{lstlisting}
+
+\section{}
+
+When $\alpha = 2$, fair value is $1,000,000 * P(T_A \leq 1 \cap T_B \leq 1) = 2351.39$
+
+When $\alpha = 1$, fair value is 197.0265.
+
+\begin{lstlisting}
+> 1000000*gumbel(u, v, 2)
+[1] 2351.39
+> 1000000*gumbel(u, v, 1)
+[1] 197.0265
+\end{lstlisting}
+
+This makes sense, since higher $\alpha$ means that the assets are more correlated, hence if one goes under, the other is more likely to default too.
+
+\section{}
+
+Kendall's $\tau$ is defined as
+
+\begin{align*}
+\kt &= P((X - X^*)(Y - Y^*) > 0) - P((X-X^*)(Y - Y^*) < 0) \\
+&= E(\sign((X-X^*)(Y-Y^*)))
+\end{align*}
+
+\subsection{}
+
+If $Y' = \frac{1}{Y}$, since both $X$ and $Y$ are always positive,
+
+\begin{align*}
+\kt &= E\left(\sign\left((X-X^*)\left(\frac{1}{Y}-\frac{1}{Y^*}\right)\right)\right) \\
+&= E\left(\sign\left((X-X^*)\left(\frac{Y* - Y}{YY*}\right)\right)\right) \\
+&= E\left(\sign\left((X-X^*)\left(Y*-Y\right)\right)\right)
+&= -0.55
+\end{align*}
+
+\subsection{}
+
+If $X' = \frac{1}{X}$,
+
+\begin{align*}
+\kt &= E\left(\sign\left(\left(\frac{1}{X} - \frac{1}{X^*}\right)\left(\frac{1}{Y}-\frac{1}{Y^*}\right)\right)\right) \\
+&= E\left(\sign\left((X^*-X)\left(Y*-Y\right)\right)\right)
+&= -(-0.55)
+&= 0.55
+\end{align*}
+
+\section{}
+
+Intuitively, it is because Spearman $\rho$ involves transforming the random variable by its CDF, which is the same as computing the rank of the variable in a finite sample. The Pearson correlation does not contain this transformation. Similarly, in calculating Kendall's $\tau$, we are only concerned with the relative ranks of the variables. Hence, a monotonically increasing formation (which $y=x^2$ is for the range 0 to 1) will not change the Kendall's $\tau$ for a variable. Hence, for both Spearman and Kendall, we are effectively calculating the rank correlation of X with itself, resulting in 1.
+
+Let Pearson correlation coefficient be $\rho_p$. Then,
+
+\begin{align*}
+\rho_p &= \frac{\cov(X,Y)}{\sigma_x\sigma_Y} \\
+&= \frac{E(XY) - E(X)E(Y)}{\sqrt{E(X^2) - E(X)^2}\sqrt{E(Y^2)-E(Y)^2}} \\
+&= \frac{E(X^3) - E(X)E(X^2)}{\sqrt{E(X^2) - E(X)^2}\sqrt{E(X^4)-E(X^2)^2}}
+\end{align*}
+
+Now,
+
+\begin{align*}
+E(X) &= 0.5 \\
+E(X^2) &= \frac{1}{3} \\
+E(X^3) &= \frac{1}{4} \\
+E(X^4) &= \frac{1}{5}
+\end{align*}
+
+Then,
+
+\begin{align*}
+\rho_p &= \frac{E(X^3) - E(X)E(X^2)}{\sqrt{E(X^2) - E(X)^2}\sqrt{E(X^4)-E(X^2)^2}} \\
+&= \frac{0.25 - 0.5*\frac{1}{3}}{\sqrt{\frac{1}{3} - 0.25}\sqrt{0.2-\frac{1}{9}}} \\
+&= 0.9682458
+\end{align*}
+
+Whereas for Spearman $\rho$ and Kendall's $\tau$, the square function does not change the rank for a variable between 0 and 1.
+
+\section{}
+
+The bivariate Frank copula is 
+
+\[C(u,v) = -\frac{1}{\theta} \log{\left[\frac{(e^{(-\theta u)} - 1)(e^{(-\theta v)} - 1)}{(e^{(-\theta)} - 1)} + 1\right]}\]
+
+As $\theta \to \infty$, $e^{(-\theta)} \to 0$, $e^{(-\theta u)} \to 0$ and $e^{(-\theta v)} \to 0$. Hence, we get nowhere, and have to use L'hospital.
+
+However, we can simplify the equation first.
+
+\begin{align*}
+C(u,v) &= -\frac{1}{\theta} \log{\left[\frac{(e^{(-\theta u)} - 1)(e^{(-\theta v)} - 1)}{(e^{(-\theta)} - 1)} + 1\right]} \\
+&= -\frac{1}{\theta} \log{\left[\frac{e^{(-\theta u -\theta v)} - e^{(-\theta u)} - e^{(-\theta v)} + 1 + e^{(-\theta)} - 1)}{(e^{(-\theta)} - 1)}\right]} \\
+&= 
+\end{align*}
+
+Now assume $u < v$. Then, $u < v < u + v$. Then,
+
+\[e^{-\theta u} > e^{-\theta v} > e^{-\theta u - \theta v}\]
+
+Since $u < v \leq 1$
+
+\[e^{-\theta u} > e^{-\theta}\]
+
+Then,
+
+\[e^{(-\theta u -\theta v)} - e^{(-\theta u)} - e^{(-\theta v)} + 1 + e^{(-\theta)} - 1) \sim e^{(-\theta u)}\]
+
+as $\theta \to \infty$.
+
+Then,
+
+\[C(u,v) \sim -\frac{1}{\theta} \log{\left[ \frac{e^{(-\theta u)}}{e^{(-\theta)} - 1} \right]}\]
+
+Taking limits naively, one still gets indeterminate forms. Apply L'hospital's rule. $\frac{d}{d \theta} \theta = 1$.
+
+\begin{align*}
+\frac{d}{d\theta} \log{\left[ \frac{e^{(-\theta u)}}{e^{(-\theta)} - 1}\right]} &=  \left(\frac{e^{(-\theta)} - 1}{e^{(-\theta u)}}\right)\left( \frac{-ue^{(-\theta u)}}{e^{(-\theta)} - 1} + \frac{e^{(-\theta u)} e^{(-\theta)}}{(e^{(-\theta)} - 1)^2} \right) \\
+&= -u + e^{(-\theta)}
+\end{align*}
+
+As $\theta \to \infty$, $-u + e^{(-\theta)} \to -u$
+
+Then, by L'hospital's rule,
+
+\[\lim_{\theta \to \infty} C(u,v) = u\]
+
+The same applies when $v < u$, then $\lim_{\theta \to \infty} C(u,v) = v$. Hence,
+
+\[\lim_{\theta \to \infty} C(u,v) = \min(u, v)\]
+
+
+
+\end{document}
